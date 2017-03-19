@@ -6,6 +6,8 @@
 Welcome to the Road Victim Handbook
 ===================================
 
+Hello!
+
 Contents:
 
 .. toctree::
