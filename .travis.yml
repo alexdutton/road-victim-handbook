@@ -1,0 +1,24 @@
+language: python
+python:
+    - "3.5"
+install:
+    - sudo apt-get -qq update
+    - sudo apt-get install graphviz -y
+    - pip install sphinx sphinxcontrib-disqus
+script:
+    - make dirhtml
+after_success:
+    - GIT_MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+    - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    - git fetch origin
+    - git checkout gh-pages
+    - find -maxdepth 1 -not \( -name _build -o -name .git -o -name . \) -exec git rm -rf --ignore-unmatch {} +
+    - mv _build/dirhtml/* _build/dirhtml/.[!.]* .
+    - rm -rf _build
+    - find -type f -not \( -name _build -o -name .git -o -name . \) -exec git add {} +
+    - git config user.name "Travis Automated Commit"
+    - git config user.email "github@it.ox.ac.uk"
+    - git commit -m "$GIT_MESSAGE"
+    - echo -e $DEPLOY_KEY > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - git push git@github.com:alexsdutton/road-victim-handbook.git gh-pages
